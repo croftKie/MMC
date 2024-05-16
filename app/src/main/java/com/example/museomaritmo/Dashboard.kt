@@ -1,157 +1,124 @@
 package com.example.museomaritmo
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.museomaritmo.Data.AppModel
 import com.example.museomaritmo.Data.Home
+import com.example.museomaritmo.ui.theme.MuseoBlue
+import com.example.museomaritmo.ui.theme.MuseoSand
+import com.example.museomaritmo.ui.theme.OffBlack
 
-@Composable
-fun Dashboard(){
-	val dashNavController = rememberNavController()
-	Column(
-		modifier = Modifier
-			.fillMaxWidth()) {
-		Welcome()
-		Options(dashNavController)
-		DashNav(dashNavController)
-	}
-}
-
-
-
-@Composable
-fun DashNav(dashNavController: NavHostController) {
-	Scaffold {
-		Box(modifier = Modifier.padding(it)){
-			NavHost(navController = dashNavController, startDestination = Home.route){
-				composable(Home.route){
-					Grid()
-				}
-				composable(com.example.museomaritmo.Data.Events.route){
-					Events()
-				}
-				composable(com.example.museomaritmo.Data.Gallery.route){
-					Gallery()
-				}
-			}
-		}
-	}
-}
 @Composable
 fun Welcome(){
-	Column(modifier = Modifier
-		.fillMaxWidth()
-		.padding(15.dp)) {
-		Text(
-			text = "Museo Maritimo de Cantabria",
-			color = Color.Black,
-			fontSize = 15.sp
-		)
-		Text(
-			text = "Dashboard",
-			color = Color.Black,
-			fontSize = 40.sp,
-		)
-	}
-}
-@Composable
-fun Options(dashNavController: NavHostController) {
-	val options = listOf(
-		"Home",
-		"Events",
-		"Gallery"
-	)
-	val destOptions = listOf(
-		Home.route,
-		com.example.museomaritmo.Data.Events.route,
-		com.example.museomaritmo.Data.Gallery.route
-	)
+	Box(modifier = Modifier.height(150.dp)){
+		Column(modifier = Modifier
+			.fillMaxWidth()
+			.fillMaxHeight(),
+			verticalArrangement = Arrangement.Bottom){
+			Image(
+				painter = painterResource(id = R.drawable.waves),
+				contentDescription = "",
+				modifier = Modifier.fillMaxWidth(),
+				contentScale = ContentScale.FillWidth
+			)
+		}
+		Column(modifier = Modifier
+			.fillMaxWidth()
+			.padding(10.dp)
+			.clip(shape = RoundedCornerShape(20.dp))
 
-	Row(
-		modifier = Modifier.fillMaxWidth(),
-		horizontalArrangement = Arrangement.SpaceEvenly) {
-		options.forEachIndexed { index, s ->
-			OptionCell(item = s, destOptions[index], dashNavController)
+		) {
+			Image(
+				painter = painterResource(id = R.drawable.logo),
+				contentDescription = "logo",
+				modifier = Modifier.height(90.dp)
+			)
 		}
 	}
-
 }
-@Composable
-fun OptionCell(item : String, dest: String, dashNavController: NavHostController){
-	Button(
-		modifier = Modifier.padding(8.dp),
-		onClick = {
-			dashNavController.navigate(dest)
-		}
-	) {
-		Text(text = item)
-	}
-}
-
 
 // EVENTS COMP
 @Composable
-fun Events(){
-	val data = arrayOf(
-		arrayOf("14/04/24", "Swim with the fish"),
-		arrayOf("14/04/24", "Swim with the fish"),
-		arrayOf("14/04/24", "Swim with the fish"),
-		arrayOf("14/04/24", "Swim with the fish"),
-		arrayOf("14/04/24", "Swim with the fish"),
-	)
+fun Events(viewModel: AppModel){
+	val data = viewModel.getEvents()
 
-	Column(modifier = Modifier.padding(10.dp)) {
-		Text(
-			text = "Upcoming Events",
-			fontSize = 26.sp,
-			modifier = Modifier.padding(bottom = 5.dp)
-		)
-		data.forEachIndexed { _, strings ->
-			Card(modifier = Modifier.padding(bottom = 10.dp)) {
-				Row(
-					modifier = Modifier
-						.padding(10.dp)
-						.fillMaxWidth(),
-					horizontalArrangement = Arrangement.SpaceEvenly) {
-					Text(
-						text = strings[0],
-						fontWeight = FontWeight.Bold,
-						fontSize = 25.sp,
+	Column{
+		Welcome()
+		Column(
+			modifier = Modifier
+				.fillMaxHeight()
+				.background(MuseoBlue)
+				.padding(16.dp)
+		) {
+			Text(
+				text = "Upcoming Events",
+				fontSize = 26.sp,
+				modifier = Modifier.padding(bottom = 16.dp)
+			)
+			
+			data.forEachIndexed { _, eventData ->
+				Card(modifier = Modifier.padding(bottom = 10.dp).shadow(5.dp)) {
+					Row(
 						modifier = Modifier
-							.padding(end = 10.dp)
+							.padding(10.dp)
+							.fillMaxWidth(),
+						horizontalArrangement = Arrangement.SpaceEvenly) {
+						Text(
+							text = eventData.date,
+							fontWeight = FontWeight.Bold,
+							fontSize = 25.sp,
+							modifier = Modifier
+								.padding(end = 10.dp)
 
-					)
-					Text(
-						fontSize = 20.sp,
-						text = strings[1]
-					)
+						)
+						Text(
+							fontSize = 20.sp,
+							text = eventData.description
+						)
+					}
 				}
 			}
 		}
@@ -160,87 +127,127 @@ fun Events(){
 
 // DASH COMP
 @Composable
-fun Grid(){
-
-	val data = arrayOf(
-		arrayOf(
-			"El Museo",
-			"La historia, edificio y las plantas del Museo Maritimo."),
-		arrayOf(
-			"Las Colecciones",
-			"Las colecciones emociante del Museo Maritimo."),
-		arrayOf(
-			"Visita Virtual",
-			"Toma una visita virtual a las colecciones del Museo Maritimo."),
-		arrayOf(
-			"Visitar El Museo",
-			"El horario, tarifa y informacion para contactar el museo."),
-	)
-
-	val dataImages = arrayOf(
-		painterResource(
-			id = R.drawable.museo_tall
-		),
-		painterResource(
-			id = R.drawable.collec_tall
-		),
-		painterResource(
-			id = R.drawable.virtual_tall
-		),
-		painterResource(
-			id = R.drawable.ticket_tall
-		)
-	)
-
-
+fun Grid(viewModel: AppModel){
+	val data = viewModel.getDashboardInfo()
 
 	Column(
 		modifier = Modifier
 			.fillMaxWidth()
-			.padding(15.dp)
+			.fillMaxHeight()
 			.verticalScroll(rememberScrollState())
 	) {
-
-
-		data.forEachIndexed { index: Int, _ ->
-			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(bottom = 20.dp),
-				horizontalArrangement = Arrangement.SpaceAround
-			) {
-				Card(
-					modifier = Modifier.fillMaxWidth()
+		Welcome()
+		Column(modifier = Modifier
+			.height(300.dp)
+			.background(MuseoBlue)
+			.fillMaxWidth()
+			.padding(16.dp)) {
+			Text(
+				modifier = Modifier.padding(bottom = 16.dp),
+				text = "Eventos próximos",
+				fontSize = 24.sp,
+				fontWeight = FontWeight.Bold
+			)
+			Card(modifier = Modifier.padding(bottom = 10.dp).shadow(5.dp)) {
+				Column(
+					modifier = Modifier
+						.padding(10.dp)
+						.fillMaxWidth(),
+					horizontalAlignment = Alignment.Start,
+					verticalArrangement = Arrangement.Center) {
+					Text(
+						text = "18/05/24",
+						fontWeight = FontWeight.Bold,
+						fontSize = 25.sp,
+						modifier = Modifier
+							.padding(bottom = 8.dp)
+					)
+					Text(
+						fontSize = 20.sp,
+						text = "Mira cómo se alimentan los tiburones."
+					)
+				}
+			}
+			Card(modifier = Modifier.padding(bottom = 10.dp).shadow(5.dp)) {
+				Column(
+					modifier = Modifier
+						.padding(10.dp)
+						.fillMaxWidth(),
+					horizontalAlignment = Alignment.Start,
+					verticalArrangement = Arrangement.Center) {
+					Text(
+						text = "21/05/24",
+						fontWeight = FontWeight.Bold,
+						fontSize = 25.sp,
+						modifier = Modifier
+							.padding(bottom = 8.dp)
+					)
+					Text(
+						fontSize = 20.sp,
+						text = "Aprende la historia de Maritimo en Santander."
+					)
+				}
+			}
+		}
+		Text(
+			modifier = Modifier
+				.background(MuseoBlue)
+				.fillMaxWidth()
+				.padding(16.dp),
+			text = "Recursos del Museo",
+			fontSize = 24.sp,
+			fontWeight = FontWeight.Bold
+		)
+		LazyRow(
+			modifier = Modifier
+				.background(MuseoBlue)
+				.padding(16.dp)
+		) {
+			itemsIndexed(data) {
+				index, item ->
+				Row(
+					modifier = Modifier
+						.width(300.dp)
+						.height(280.dp)
+						.padding(bottom = 20.dp, end = 20.dp),
+					horizontalArrangement = Arrangement.SpaceAround
 				) {
-					Box(modifier = Modifier.padding(8.dp)){
-						Row(modifier = Modifier
-							.fillMaxWidth()
-							.fillMaxHeight()) {
-							Image(
-								painter = dataImages[index],
-								contentDescription = "image",
-								modifier = Modifier.fillMaxWidth(0.3f))
-							Column(
-								modifier = Modifier
-									.padding(8.dp)
-									.fillMaxHeight(1f),
-								verticalArrangement = Arrangement.SpaceBetween
-							) {
-								Text(
-									modifier = Modifier.padding(10.dp),
-									text = data[index][0],
-									fontSize = 20.sp,
-									fontWeight = FontWeight.Bold
-								)
-								Text(
-									modifier = Modifier.padding(10.dp),
-									text = data[index][1]
-								)
-								Button(
-									modifier = Modifier.align(Alignment.End),
-									onClick = { }
+					Card(
+						modifier = Modifier.fillMaxWidth().shadow(5.dp)
+					) {
+						Box(modifier = Modifier.padding(8.dp)){
+							Row(modifier = Modifier
+								.fillMaxWidth()
+								.fillMaxHeight()) {
+								Image(
+									painter = painterResource(id = item.imageResource),
+									contentDescription = "image",
+									modifier = Modifier
+										.fillMaxWidth(0.3f)
+										.fillMaxHeight(),
+									contentScale = ContentScale.FillHeight)
+								Column(
+									modifier = Modifier
+										.padding(8.dp)
+										.fillMaxHeight(1f),
+									verticalArrangement = Arrangement.SpaceBetween
 								) {
-									Text(text = "Pulsar")
+									Text(
+										modifier = Modifier.padding(10.dp),
+										text = item.title,
+										fontSize = 20.sp,
+										fontWeight = FontWeight.Bold
+									)
+									Text(
+										modifier = Modifier.padding(10.dp),
+										text = item.description
+									)
+									Button(
+										modifier = Modifier.align(Alignment.End),
+										onClick = { }
+									) {
+										Text(text = "Pulsar")
+									}
 								}
 							}
 						}
@@ -251,66 +258,36 @@ fun Grid(){
 	}
 }
 
-//
+// GALLERY COMP
 @Composable
-fun Gallery(){
-	val galleryImages = listOf(
-		arrayOf(
-			painterResource(id = R.drawable.gal_1),
-			painterResource(id = R.drawable.gal_2),
-		),
-		arrayOf(
-			painterResource(id = R.drawable.gal_3),
-			painterResource(id = R.drawable.gal_4),
-		),
-		arrayOf(
-			painterResource(id = R.drawable.gal_5),
-			painterResource(id = R.drawable.gal_6),
-		),
-		arrayOf(
-			painterResource(id = R.drawable.gal_7),
-			painterResource(id = R.drawable.gal_8),
-		),
-		arrayOf(
-			painterResource(id = R.drawable.gal_9),
-			painterResource(id = R.drawable.gal_10),
-		)
-	)
+fun Gallery(viewModel: AppModel){
+	val galleryImages = viewModel.getGalleryImages()
 	Column(
 		modifier = Modifier.verticalScroll(rememberScrollState())
 	) {
-		repeat(galleryImages.size){ index ->
-			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(bottom = 8.dp),
-				horizontalArrangement = Arrangement.SpaceEvenly) {
-				repeat(2){
-					GalleryCard(imageId = galleryImages[index][it])
-				}
+		Welcome()
+		Column(
+			modifier = Modifier
+				.background(MuseoBlue)
+				.fillMaxWidth()
+				.padding(top = 16.dp),
+			horizontalAlignment = Alignment.CenterHorizontally
+		) {
+			repeat(galleryImages.size){ index ->
+				GalleryCard(imageId = galleryImages[index].imageResource)
 			}
 		}
 	}
 }
 @Composable
-fun GalleryCard(imageId: Painter){
-	Card {
+fun GalleryCard(imageId: Int){
+	Card(modifier = Modifier.padding(8.dp).shadow(5.dp)) {
 		Box(
 			modifier = Modifier
-				.requiredSize(180.dp, 180.dp)
+				.requiredSize(300.dp, 300.dp)
 				.padding(8.dp)
 		){
-			Image(painter = imageId, contentDescription = "image")
+			Image(painter = painterResource(id = imageId), contentDescription = "image")
 		}
 	}
-}
-
-
-//
-//
-// PREVIEWS
-@Preview(showBackground = true)
-@Composable
-fun GridPreview(){
-	Gallery()
 }

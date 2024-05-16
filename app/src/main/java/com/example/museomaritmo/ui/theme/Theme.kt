@@ -19,7 +19,7 @@ import androidx.core.view.WindowCompat
 private val colors = lightColorScheme(
 	primary = MuseoBlue,
 	onPrimary = Color.Black,
-	secondary = MuseoGreen,
+	secondary = MuseoSand,
 	background = bgGrey,
 	surfaceVariant = Color.White,
 	onSurfaceVariant = Color.Black,

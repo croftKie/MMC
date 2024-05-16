@@ -1,5 +1,11 @@
 package com.example.museomaritmo.Data
 
+import android.graphics.drawable.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.museomaritmo.R
 
 interface Destinations {
@@ -35,17 +41,24 @@ object Settings : Destinations {
 
 interface DashDests {
 	val route: String
+	val icon: ImageVector
 }
 
 object Home : DashDests {
 	override val route: String
 		get() = "Home"
+	override val icon: ImageVector
+		get() = Icons.Default.Home
 }
 object Events : DashDests {
 	override val route: String
 		get() = "Events"
+	override val icon: ImageVector
+		get() = Icons.Default.DateRange
 }
 object Gallery : DashDests {
 	override val route: String
 		get() = "Gallery"
+	override val icon: ImageVector
+		get() = Icons.Default.List
 }
